@@ -1,0 +1,44 @@
+---
+title: "CLE Big Data Meetup Page"
+author: "Aaron M. Montgomery"
+format: 
+  html:
+    theme: solar
+---
+
+Welcome, and thanks for attending my talk!
+
+I'm on [LinkedIn](https://www.linkedin.com/in/aaron-montgomery-6b17421b1/) -- 
+let's connect! I'm always open to collaborating on interesting statistical or 
+data-oriented projects. You can reach me on LinkedIn or at amontgom (atsymbol) 
+bw.edu.
+
+## Puzzle 1 (Penney's Game)
+
+> A referee flips a coin many times. Izzy bets on the sequence HHT; Moore bets
+on the sequence HTH. The winner is the one whose sequence comes up first. What
+is the probability of each player winning?
+
+Answer, mathematical proof and code for Python simulation found 
+[here](puzzle_1.html).
+
+## Puzzle 2 (Bag of Candies)
+
+> I have a bag that contains 20 Skittles and 100 M&Ms. Each day, I
+draw one candy, note its type, and eat it. I then continue drawing candies and
+eating them so long as they're the same type -- but when I draw one of the other
+type, I put it back and stop for the day.
+>
+> What is the probability that the last candy will be a Skittle?
+
+Answer, mathematical proof and code for Python simulation found 
+[here](puzzle_2.html).
+
+## Slides
+
+You can see the original slide deck [here](monte_carlo_lab.html).
+
+## GitHub Repo
+
+You can find the GitHub repo hosting all things associated to this presentation
+at [https://github.com/aaron-montgomery/clebigdata-mar23](https://github.com/aaron-montgomery/clebigdata-mar23).
