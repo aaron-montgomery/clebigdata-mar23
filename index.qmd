@@ -10,8 +10,8 @@ Welcome, and thanks for attending my talk!
 
 I'm on [LinkedIn](https://www.linkedin.com/in/aaron-montgomery-6b17421b1/) -- 
 let's connect! I'm always open to collaborating on interesting statistical or 
-data-oriented projects. You can reach me on LinkedIn or at amontgom (atsymbol) 
-bw.edu.
+data-oriented projects. You can also reach me at amontgom (atsymbol) bw (dot)
+edu.
 
 ## Puzzle 1 (Penney's Game)
 
