@@ -1,0 +1,112 @@
+---
+title: "Puzzle 2: Bag of Candies"
+author: "Aaron M. Montgomery"
+format: 
+  html:
+    theme: solar
+execute:
+  echo: true
+jupyter: python3    
+---
+
+## Problem Statement
+
+> I have a bag that contains 20 Skittles and 100 M&Ms. Each day, I
+draw one candy, note its type, and eat it. I then continue drawing candies and
+eating them so long as they're the same type -- but when I draw one of the other
+type, I put it back and stop for the day.
+>
+> What is the probability that the last candy will be a Skittle?
+
+## Simulation (Python)
+
+```{python}
+import numpy as np
+rng = np.random.default_rng()
+
+# This function will simulate depletion of one entire bag of candies and will
+# return True if the last candy is a Skittle. The `list.pop()` method is used
+# extensively; this method returns the value of a list at a given index while
+# simultaneously deleting that value from the list. It's also delightful to be
+# able to "pop" a candy.
+def bag_of_candies(n_skittles, n_mms):
+    
+    bag = ['S'] * n_skittles + ['M'] * n_mms
+    
+    # starting with bag (a long list), remove items until only one is left
+    while(len(bag) > 1):
+      
+        # set today's acceptable candy to eat (and remove it from bag)
+        current_candy = bag.pop(rng.integers(len(bag)))
+        
+        # draw next candy without removing it (yet)
+        next_draw_position = rng.integers(len(bag))
+        
+        # continue drawing and removing candies, but only of the right type
+        while(bag[next_draw_position] == current_candy and len(bag) > 1):
+            bag.pop(next_draw_position)
+            next_draw_position = rng.integers(len(bag))
+    
+    return bag == ['S']
+
+# Mean of 10,000 trials  
+print('Percent of trials with a final Skittle: {}'
+      .format(np.mean([bag_of_candies(20, 100) for i in range(10000)]) * 100)
+      )
+```
+
+
+## Why?
+
+As the simulation suggests, your last candy has a 50/50 chance of being either
+a Skittle or an M&M. It should also be pretty believable that the number of 
+M&M's and Skittles involved is completely irrelevant to the question; it's the
+process itself that results in a 50/50 chance for the last candy (so long as
+there's at least 1 candy of each type).
+
+We'll prove this result by induction; specifically, we'll induct on the number
+of candies in the bag. At each stage, we'll assume that there is at least 1
+candy of each type.
+
+* $n = 2$: If there are 2 candies in the bag, this means there's 1 M&M and 1
+Skittle; clearly, either one has a 50/50 chance of being the last candy drawn.
+
+* $\{2, \dots, n\} \implies n + 1$: 
+  Suppose there are $n + 1$ candies in the bag. Then there are three 
+  possibilities:
+  
+  - We will draw all the M&M's first without ever drawing a single Skittle;
+  hence, the process will end on the *next* day and a Skittle will be last.
+  - We will draw all the Skittles first without ever drawing a single M&M;
+  hence, the process will end on the *next* day and an M&M will be last.
+  - We will draw a few Skittles or M&M's, but not at all of them; hence, the
+  day will end with the bag still having a mixture of the types, but fewer of
+  them than it did before. 
+  
+  The first case is equivalent to placing all $n + 1$ of the candies in a random
+  order and having all the M&M's be at the beginning. However, the second case
+  is equivalent to having all the M&M's be at the *end* of that same random
+  ordering. These are clearly equal by symmetry; indeed, if there are $k$ M&M's
+  among the $n + 1$ candies, then both are equal to $1 / \binom {n+1}{k}$.
+  
+  Thus, either the game is destined to end in two days (with equal chance of 
+  ending on a Skittle or an M&M), or the next day will restart the game with a
+  smaller number of total candies in the bag. But by induction, any smaller bag
+  size has a similar eventual 50/50 fate of ending with either a Skittle or an
+  M&M.
+  
+This induction proof almost feels like cheating, but it becomes clearer if we
+carefully consider the $n = 3$ case. Suppose that we have three candies in the 
+bag, which are (without loss of generality) two Skittles and one M&M. These 
+three candies can be placed in any of three orders, each of which are equally
+likely:
+
+* $M, S, S$
+* $S, S, M$
+* $S, M, S$
+
+These correspond to the three cases above. In the first case, a Skittle will be
+last; in the second case, an M&M will be last. In the third case, we'll draw 
+one Skittle and eat it; then we'll draw an M&M and put it back, so the bag will
+have one of each type for the next day's draw. The "put it back" action is
+ultimately what makes this all work; this is the essential *why* of the problem.

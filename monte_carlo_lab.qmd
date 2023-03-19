@@ -1,0 +1,484 @@
+---
+title: "The Monte Carlo Laboratory"
+author: "Aaron M. Montgomery"
+format: 
+  revealjs:
+    theme: night
+---
+
+## My background
+
+::: {.incremental}
+- PhD in Probability Theory (2013)
+- Representative sample of dissertation:
+![theoretical probability](dissertation_sample2.png)
+:::
+
+## Dice problem: take 1
+
+> Problem: You roll ten standard dice. What is the probability that between two
+and four of them (inclusively) land on six?
+
+. . .
+
+$\quad \binom{10}{2} \left(\frac 1 6 \right)^2 \left(\frac 5 6 \right)^8 + 
+  \binom{10}{3} \left(\frac 1 6 \right)^3 \left(\frac 5 6 \right)^7 +
+  \binom{10}{4} \left(\frac 1 6 \right)^4 \left(\frac 5 6 \right)^6$
+  
+$= \frac{3,359,375}{6,718,464} \approx \fbox{0.5000}$
+
+## Monte Carlo simulations: an introduction
+
+Idea: Estimate probability by simulating experiment many times
+
+. . .
+
+```{{pseudocode}}
+for i = 1 to 10,000:
+  roll 10 virtual dice
+  count number of sixes as n
+  if n is between 2 and 4, record TRUE; else, FALSE
+  
+estimated prob = proportion of TRUE values out of 10,000
+```
+
+## Dice problem: take 2
+
+> Problem: You roll ten standard dice. What is the probability that between two
+and four of them (inclusively) land on six?
+
+Theoretically-derived answer: $\frac{3,359,375}{6,718,464} \approx \fbox{0.5000}$
+
+. . .
+
+```{python}
+import matplotlib.pyplot as plt
+plt.style.use('dark_background')
+plt.rcParams.update({'font.size': 22})
+
+from scipy.stats import norm
+```
+
+```{python}
+#| echo: true
+
+import numpy as np
+rng = np.random.default_rng()
+
+def ten_dice_problem():
+    die_rolls = np.array([rng.integers(1, 7) for i in range(10)]) 
+    num_sixes = sum(die_rolls == 6)               # count sixes in die_rolls
+    return (num_sixes >= 2) and (num_sixes <= 4)  # output is T or F
+  
+print(np.mean([ten_dice_problem() for i in range(10000)]))
+```
+
+## A Mathematical Laboratory
+
+Benefits of Monte Carlo simulations: 
+  
+<!-- I know I should use CSS instead of the font color tag. Please consider this
+     my semi-public self-shaming. -AMM -->
+::: {.incremental}
+  - gives quick way to check work
+  - sharpens thinking about probability questions
+  - provides accessible entry point to field
+  - programming puzzles are <font color = 'yellow'>fun</font>
+:::
+  
+## Central Limit Theorem, take 1
+<!-- 0 of 5 -->
+
+> Problem: You roll $n$ standard dice; let $X$ be the number of them that land
+on 6. What is the probability distribution of $X$?
+
+. . .
+
+
+```{python}
+
+def plot_sixes_count(n_dice, show_curve):
+  
+    # reset random number generator (for reproducibility on graphs)
+    # this particularly matters for the two n = 50 graphs where I want
+    #   the same graph repeated but with a normal density grafted on
+    rng = np.random.default_rng(seed=6538)  
+    
+    def count_sixes(n_dice):
+        die_rolls = np.array([rng.integers(1, 7) for i in range(n_dice)])
+        return sum(die_rolls == 6)
+  
+    fig, ax = plt.subplots(figsize = (10, 3))
+    x_range = np.linspace(-0.5, n_dice + 0.5, num = n_dice + 2)
+    x_range_full = np.linspace(-0.5, n_dice + 0.5, num=1000)
+    
+    # histogram of sixes among 10K die rolls
+    ax.hist([count_sixes(n_dice) for i in range(10000)],
+            bins = x_range, edgecolor = 'black')
+    
+    # overlay curve (if needed)
+    if show_curve:
+        norm_mean = 1/6 * n_dice
+        norm_sd = (n_dice * 1/6 * 5/6) ** (1/2)
+        ax.plot(x_range_full, 
+                norm.pdf(x_range_full, norm_mean, norm_sd) * 10000,
+                color = 'yellow')
+        
+    # set general options and plot    
+    ax.set_title('Simulations: rolling ' + str(n_dice) + ' dice')
+    ax.set_xlabel('Number of sixes rolled')
+    ax.set_ylabel('Trials (/10K)')
+    plt.show()
+    
+plot_sixes_count(1, False)
+```
+
+## Central Limit Theorem, take 1
+<!-- 1 of 5 -->
+
+> Problem: You roll $n$ standard dice; let $X$ be the number of them that land
+on 6. What is the probability distribution of $X$?
+
+```{python}
+plot_sixes_count(2, False)
+```
+
+## Central Limit Theorem, take 1
+<!-- 2 of 5 -->
+
+> Problem: You roll $n$ standard dice; let $X$ be the number of them that land
+on 6. What is the probability distribution of $X$?
+
+```{python}
+plot_sixes_count(5, False)
+```
+
+## Central Limit Theorem, take 1
+<!-- 3 of 5 -->
+
+> Problem: You roll $n$ standard dice; let $X$ be the number of them that land
+on 6. What is the probability distribution of $X$?
+
+```{python}
+rng = np.random.default_rng(seed=6538) # for reproducibility / next slide
+plot_sixes_count(20, False)
+```
+
+## Central Limit Theorem, take 1
+<!-- 4 of 5 -->
+
+> Problem: You roll $n$ standard dice; let $X$ be the number of them that land
+on 6. What is the probability distribution of $X$?
+
+```{python}
+rng = np.random.default_rng(seed=6538)
+plot_sixes_count(50, False)
+```
+
+## Central Limit Theorem, take 1
+<!-- 5 of 5 -->
+
+> Problem: You roll $n$ standard dice; let $X$ be the number of them that land
+on 6. What is the probability distribution of $X$?
+
+```{python}
+plot_sixes_count(50, True)
+```
+
+## Central Limit Theorem, take 2
+<!-- precursor slide -->
+
+From the famous [California Housing dataset](https://scikit-learn.org/stable/datasets/real_world.html#california-housing-dataset):
+
+```{python}
+from sklearn.datasets import fetch_california_housing
+housing = fetch_california_housing(as_frame=True)
+```
+
+```{python}
+fig, ax = plt.subplots(figsize = (10, 4))
+ax.hist(housing.frame.MedHouseVal, edgecolor='black', bins=20)
+ax.set_title('California House Values')
+ax.set_xlabel('Value (100K $)')
+ax.set_ylabel('Count')
+plt.show()
+```
+
+## Central Limit Theorem, take 2
+<!-- slide 1 of 5 -->
+
+> Consider a random sample of $n$ California house values. What is the 
+distribution of the sample average?
+
+```{python}
+from statistics import stdev
+
+def sample_houses(n_houses, seed):
+    chosen_values = housing.frame.MedHouseVal.sample(n_houses, random_state=seed)
+    return chosen_values.mean()
+  
+def plot_sample_houses(n_houses, show_curve):
+    fig, ax = plt.subplots(figsize=(10, 3))
+    
+    # draw 10K copies of sample of appropriate size
+    sample_means = [sample_houses(n_houses, i) for i in range(1000)]
+    x_range = (min(sample_means), max(sample_means))
+    bin_width = (x_range[1] - x_range[0]) / 20
+    
+    # make histogram
+    ax.hist(sample_means, edgecolor='black', bins=20)
+
+    # draw curve, if requested
+    if show_curve:
+        norm_mean = housing.frame.MedHouseVal.mean()
+        norm_sd = stdev(housing.frame.MedHouseVal) / (n_houses) ** (1/2)
+        x_range_linspace = np.linspace(x_range[0], x_range[1], num=1000)
+        ax.plot(x_range_linspace,
+                norm.pdf(x_range_linspace, norm_mean, norm_sd) * 1000 * bin_width,
+                color='yellow')
+    
+    # plot options
+    ax.set_title('Sample avg. of ' + str(n_houses) + ' house(s)')
+    ax.set_xlabel('Mean value (100K $)')
+    ax.set_ylabel('Trials (/1K)')
+    plt.show()
+    
+```
+
+```{python}
+plot_sample_houses(1, False)
+```
+
+## Central Limit Theorem, take 2
+<!-- slide 2 of 5 -->
+
+> Consider a random sample of $n$ California house values. What is the 
+distribution of the sample average?
+
+```{python}
+plot_sample_houses(2, False)
+```
+
+## Central Limit Theorem, take 2
+<!-- slide 3 of 5 -->
+
+> Consider a random sample of $n$ California house values. What is the 
+distribution of the sample average?
+
+```{python}
+plot_sample_houses(10, False)
+```
+
+## Central Limit Theorem, take 2
+<!-- slide 4 of 5 -->
+
+> Consider a random sample of $n$ California house values. What is the 
+distribution of the sample average?
+
+```{python}
+plot_sample_houses(100, False)
+```
+
+## Central Limit Theorem, take 2
+<!-- slide 5 of 5 -->
+
+> Consider a random sample of $n$ California house values. What is the 
+distribution of the sample average?
+
+```{python}
+plot_sample_houses(100, True)
+```
+
+## A Benign-Looking Question
+
+> Suppose you randomly draw letters one at a time (without replacement) until
+the first time you draw one out of order, after which you stop. What is the
+expected number of letters you will draw?
+
+. . .
+
+Example: If you draw B $\rightarrow$ G $\rightarrow$ W $\rightarrow$ K, then
+you have stopped after **4** letters.
+
+## A Benign-Looking Solution
+
+> Suppose you randomly draw letters one at a time (without replacement) until
+the first time you draw one out of order, after which you stop. What is the
+expected number of letters you will draw?
+
+```{python}
+# for reproducibility, which in this context is just me being obsessive about
+# storytelling
+rng = np.random.default_rng(seed=5920)
+```
+
+
+```{python}
+#| echo: true
+def letters_draw():
+    rand_abc = rng.permutation(26)        # rearrangement of 0-25
+    i = 1                                 # to iterate through rand_abc
+    while(rand_abc[i] > rand_abc[i-1]):
+        i += 1                            # keep scanning until misordered
+    return i + 1                          # account for zero-index shift
+
+```
+
+## The Solution in Action
+
+> Suppose you randomly draw letters one at a time (without replacement) until
+the first time you draw one out of order, after which you stop. What is the
+expected number of letters you will draw?
+
+```{python}
+trial_results = [letters_draw() for i in range(10000)]
+
+fig, ax = plt.subplots(figsize=(10, 3))
+ax.hist(trial_results,
+        bins=np.linspace(1.5, max(trial_results) + 0.5, num=max(trial_results)),
+        edgecolor='black')
+ax.set_xlabel('Number of letters drawn')
+ax.set_ylabel('Simulations (/10K)')
+ax.set_title('Results of letters_draw()')
+plt.show()
+```
+
+## Answering the Question
+
+> Suppose you randomly draw letters one at a time (without replacement) until
+the first time you draw one out of order, after which you stop. What is the
+expected number of letters you will draw?
+
+```{python}
+#| echo: true
+print(np.mean([letters_draw() for i in range(10000)]))
+#   "Wait... is the true answer just e (2.71828...)?"
+```
+
+. . .
+
+```{python}
+print(np.mean([letters_draw() for i in range(10000)]))
+```
+
+. . .
+
+```{python}
+print(np.mean([letters_draw() for i in range(10000)]))
+```
+
+. . .
+
+```{python}
+#| echo: true
+print(np.mean([letters_draw() for i in range(int(1e5))]))
+```
+
+. . .
+
+```{python}
+#| echo: true
+print(np.mean([letters_draw() for i in range(int(1e6))]))
+```
+
+## The Theoretical Answer
+
+<!-- obviously an align environment would be better and less hack-y, but
+quarto doesn't seem to support interfacing slide breaks with it yet, so ... -->
+
+. . .
+
+$\mathbb E[N] = \mathbb E \left[1 + 1 + 1_{1 < 2} + 1_{1 < 2 < 3} + \dots + 1_{1 < \dots < 25} \right]$
+
+. . .
+
+$\phantom{\mathbb E[N]} = 1 + 1 + \mathbb E \left[1_{1 < 2} \right] + \mathbb E \left[1_{1 < 2 < 3} \right] + \dots + \mathbb E \left[1_{1 < \dots < 25} \right]$
+
+. . .
+
+$\phantom{\mathbb E[N]} = 1 + 1 + \frac 1 2 + \frac 1 {3!} + \dots + \frac 1 {25!}$
+
+. . .
+
+$\phantom{\mathbb E[N]} = \frac{1}{0!} + \frac{1}{1!} + \frac 1 2 + \frac 1 {3!} + \dots + \frac 1 {25!} = \sum_{k=0}^{25} \frac{1}{k!}$
+
+## The Theoretical Answer
+
+::: {.incremental}
+- $\mathbb E[N] = \sum_{k=0}^{25} \frac 1 {k!}$
+- $e = \sum_{k = 0}^{\infty} \frac 1 {k!}$
+- difference: $\sum_{k = 26}^{\infty} \frac 1 {k!}$
+:::
+
+. . .
+
+```{python}
+#| echo: true
+from math import factorial
+print("E[N] = {}".format(sum([1 / factorial(k) for k in range(26)])))
+print("   e = {}".format(np.exp(1)))
+```
+
+. . .
+
+```{python}
+#| echo: true
+print("diff = {}".format(sum([1 / factorial(k) for k in range(26, 1000)])))
+```
+
+## Monte Carlo vs. Theoretical Probability?
+
+. . .
+
+Advantages of the Monte Carlo approach:
+
+::: {.incremental}
+- permits laboratory-like exploration
+- allows progress where theory fails
+:::
+
+. . .
+
+Advantages of the theoretical approach:
+
+::: {.incremental}
+- lets us state and prove theorems
+- reveals the **why**
+:::
+
+. . .
+
+The best thing to have is... <font color = 'yellow'>BOTH!</font>
+
+## Puzzle 1: Penney's Game
+
+> A referee flips a coin many times. Izzy bets on the sequence HHT; Moore bets
+on the sequence HTH. The winner is the one whose sequence comes up first. What
+is the probability of each player winning?
+
+. . .
+
+<center> HTTHTTT<font color = 'yellow'>HTH</font> </center>
+
+. . .
+
+Answer: **not** 50/50
+
+## Puzzle 2: Bag of candies
+
+> I have a bag that contains 20 Skittles and 100 M&Ms. Each day, I
+draw one candy, note its type, and eat it. I then continue drawing candies and
+eating them so long as they're the same type -- but when I draw one of the other
+type, I put it back and stop for the day.
+>
+> What is the probability that the last candy will be a Skittle?
+
+. . .
+
+Answer: **not** what I first guessed
+
+## QR code
+
+GitHub page should have: questions, simulation solutions, and the mathematical proofs
+
+
