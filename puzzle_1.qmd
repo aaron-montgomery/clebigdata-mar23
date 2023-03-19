@@ -1,0 +1,78 @@
+---
+title: "Puzzle 1: Penney's Game"
+author: "Aaron M. Montgomery"
+format: 
+  html:
+    theme: solar
+execute:
+  echo: true
+jupyter: python3
+---
+
+## Problem Statement
+
+> A referee flips a coin many times. Izzy bets on the sequence HHT; Moore bets
+on the sequence HTH. The winner is the one whose sequence comes up first. What
+is the probability of each player winning?
+
+## Simulation (Python)
+
+```{python}
+import numpy as np
+rng = np.random.default_rng()
+
+# This function will accept two sequences of 3 coins as lists of 3 single 
+# characters, e.g. seq_1 = ['H', 'T', 'T'].
+# Returns True when seq_1 wins and False when seq_2 wins.
+def penneys_game(seq_1, seq_2):
+  
+    # referee flips initial 3 coins
+    ref_seq = rng.choice(['H', 'T'], size = 3, replace = True)
+    
+    # continue playing until someone wins
+    while((ref_seq != seq_1).any() and (ref_seq != seq_2).any()):
+        
+        # if sequence doesn't match, advance 2nd/3rd coin to first two positions
+        # then re-flip third coin as a new one
+        ref_seq = np.concatenate(
+          (ref_seq[1:], rng.choice(['H', 'T'], size = 1))
+        )
+    
+    return (ref_seq == seq_1).all()
+  
+# Mean of 10000 T/F trials will be proportion of Trues, i.e. proportion of times
+# player 1 wins.
+player_1_win_prop = np.mean(
+    [penneys_game(['H', 'H', 'T'], ['H', 'T', 'H']) for i in range(10000)]
+)
+
+print('Player 1 win percentage: {}'.format(player_1_win_prop * 100))
+
+```
+
+## Why?
+
+If your intuition is like mine, your first instinct might be to think that the 
+two sequences should have the same chance of winning; after all, they're each
+length 3, and any given sequence of 3 coin flips has a $1/8$ chance of being
+thrown in isolation. The issue is that the coin flips in this problem do not
+occur in isolation.
+
+Suppose the referee has just flipped the first copy of H. This means that both
+Izzy (looking to see HHT) and Moore (looking to see HTH) have the first coin
+they were hoping to see in their sequences. Over the next two coin flips, there
+are four equally likely things to occur: HH, HT, TH, TT.
+
+* If the next two coins are TH, then Moore wins.
+* If the next two coins are HT, then Izzy wins.
+* If the next two coins are HH, then Izzy is guaranteed to eventually win. No
+matter how many more consecutive H's are thrown, there will eventually be a T,
+and at that point the sequence will end with HHT; since Moore needs that same
+T *and also an H behind it*, it is not possible for HTH to appear before HHT in
+this scenario.
+* If the next two coins are TT, then both players are starting back from the
+beginning, effectively waiting for their first throw of heads.
+
+Since one of the four scenarios results in the process starting over, we can
+discard it; Izzy wins in 2 of the remaining 3 scenarios, so Izzy's win
+probability is $2/3$.
