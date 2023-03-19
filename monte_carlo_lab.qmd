@@ -477,8 +477,10 @@ type, I put it back and stop for the day.
 
 Answer: **not** what I first guessed
 
-## QR code
+## Thank you!
 
-GitHub page should have: questions, simulation solutions, and the mathematical proofs
+Slides, GitHub link, and solutions to puzzles:
 
+![](qr-code-clebigdata.png){width=25%, fig-align="center"}
 
+[aaron-montgomery.github.io/clebigdata-mar23/](https://aaron-montgomery.github.io/clebigdata-mar23/)
