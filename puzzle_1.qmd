@@ -76,3 +76,5 @@ beginning, effectively waiting for their first throw of heads.
 Since one of the four scenarios results in the process starting over, we can
 discard it; Izzy wins in 2 of the remaining 3 scenarios, so Izzy's win
 probability is $2/3$.
+
+[Back to main page](index.html)

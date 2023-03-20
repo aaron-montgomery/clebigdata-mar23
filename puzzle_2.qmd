@@ -110,3 +110,5 @@ last; in the second case, an M&M will be last. In the third case, we'll draw
 one Skittle and eat it; then we'll draw an M&M and put it back, so the bag will
 have one of each type for the next day's draw. The "put it back" action is
 ultimately what makes this all work; this is the essential *why* of the problem.
+
+[Back to main page](index.html)
