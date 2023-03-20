@@ -80,10 +80,10 @@ Benefits of Monte Carlo simulations:
 <!-- I know I should use CSS instead of the font color tag. Please consider this
      my semi-public self-shaming. -AMM -->
 ::: {.incremental}
-  - gives quick way to check work
+  - gives quick way to check theoretical work
   - sharpens thinking about probability questions
+  - programming puzzles are both important and <font color = 'yellow'>fun</font>
   - provides accessible entry point to field
-  - programming puzzles are <font color = 'yellow'>fun</font>
 :::
   
 ## Central Limit Theorem, take 1
@@ -198,7 +198,7 @@ housing = fetch_california_housing(as_frame=True)
 ```{python}
 fig, ax = plt.subplots(figsize = (10, 4))
 ax.hist(housing.frame.MedHouseVal, edgecolor='black', bins=20)
-ax.set_title('California House Values')
+ax.set_title('California House Values (1990)')
 ax.set_xlabel('Value (100K $)')
 ax.set_ylabel('Count')
 plt.show()
@@ -295,8 +295,6 @@ plot_sample_houses(100, True)
 the first time you draw one out of order, after which you stop. What is the
 expected number of letters you will draw?
 
-. . .
-
 Example: If you draw B $\rightarrow$ G $\rightarrow$ W $\rightarrow$ K, then
 you have stopped after **4** letters.
 
@@ -318,7 +316,7 @@ rng = np.random.default_rng(seed=5920)
 def letters_draw():
     rand_abc = rng.permutation(26)        # rearrangement of 0-25
     i = 1                                 # to iterate through rand_abc
-    while(rand_abc[i] > rand_abc[i-1]):
+    while (rand_abc[i] > rand_abc[i-1]):
         i += 1                            # keep scanning until misordered
     return i + 1                          # account for zero-index shift
 
@@ -400,7 +398,7 @@ $\phantom{\mathbb E[N]} = 1 + 1 + \frac 1 2 + \frac 1 {3!} + \dots + \frac 1 {25
 
 . . .
 
-$\phantom{\mathbb E[N]} = \frac{1}{0!} + \frac{1}{1!} + \frac 1 2 + \frac 1 {3!} + \dots + \frac 1 {25!} = \sum_{k=0}^{25} \frac{1}{k!}$
+$\phantom{\mathbb E[N]} = \frac{1}{0!} + \frac{1}{1!} + \frac 1 {2!} + \frac 1 {3!} + \dots + \frac 1 {25!} = \sum_{k=0}^{25} \frac{1}{k!}$
 
 ## The Theoretical Answer
 
@@ -479,7 +477,7 @@ Answer: **not** what I first guessed
 
 ## Thank you!
 
-Slides, GitHub link, and solutions to puzzles:
+Problem statements / solutions, slides, GitHub link:
 
 ![](qr-code-clebigdata.png){width=25%, fig-align="center"}
 

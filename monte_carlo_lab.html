@@ -448,7 +448,7 @@ Aaron M. Montgomery
 <span id="cb2-8"><a href="#cb2-8"></a>  </span>
 <span id="cb2-9"><a href="#cb2-9"></a><span class="bu">print</span>(np.mean([ten_dice_problem() <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10000</span>)]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>0.4961</code></pre>
+<pre><code>0.4988</code></pre>
 </div>
 </div>
 </div>
@@ -460,10 +460,10 @@ Aaron M. Montgomery
      my semi-public self-shaming. -AMM -->
 <div>
 <ul>
-<li class="fragment">gives quick way to check work</li>
+<li class="fragment">gives quick way to check theoretical work</li>
 <li class="fragment">sharpens thinking about probability questions</li>
+<li class="fragment">programming puzzles are both important and <font color="yellow">fun</font></li>
 <li class="fragment">provides accessible entry point to field</li>
-<li class="fragment">programming puzzles are <font color="yellow">fun</font></li>
 </ul>
 </div>
 </section>
@@ -616,9 +616,7 @@ Aaron M. Montgomery
 <blockquote>
 <p>Suppose you randomly draw letters one at a time (without replacement) until the first time you draw one out of order, after which you stop. What is the expected number of letters you will draw?</p>
 </blockquote>
-<div class="fragment">
 <p>Example: If you draw B <span class="math inline">\(\rightarrow\)</span> G <span class="math inline">\(\rightarrow\)</span> W <span class="math inline">\(\rightarrow\)</span> K, then you have stopped after <strong>4</strong> letters.</p>
-</div>
 </section>
 <section id="a-benign-looking-solution" class="slide level2">
 <h2>A Benign-Looking Solution</h2>
@@ -629,7 +627,7 @@ Aaron M. Montgomery
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">def</span> letters_draw():</span>
 <span id="cb4-2"><a href="#cb4-2"></a>    rand_abc <span class="op">=</span> rng.permutation(<span class="dv">26</span>)        <span class="co"># rearrangement of 0-25</span></span>
 <span id="cb4-3"><a href="#cb4-3"></a>    i <span class="op">=</span> <span class="dv">1</span>                                 <span class="co"># to iterate through rand_abc</span></span>
-<span id="cb4-4"><a href="#cb4-4"></a>    <span class="cf">while</span>(rand_abc[i] <span class="op">&gt;</span> rand_abc[i<span class="op">-</span><span class="dv">1</span>]):</span>
+<span id="cb4-4"><a href="#cb4-4"></a>    <span class="cf">while</span> (rand_abc[i] <span class="op">&gt;</span> rand_abc[i<span class="op">-</span><span class="dv">1</span>]):</span>
 <span id="cb4-5"><a href="#cb4-5"></a>        i <span class="op">+=</span> <span class="dv">1</span>                            <span class="co"># keep scanning until misordered</span></span>
 <span id="cb4-6"><a href="#cb4-6"></a>    <span class="cf">return</span> i <span class="op">+</span> <span class="dv">1</span>                          <span class="co"># account for zero-index shift</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -702,7 +700,7 @@ quarto doesn't seem to support interfacing slide breaks with it yet, so ... -->
 <p><span class="math inline">\(\phantom{\mathbb E[N]} = 1 + 1 + \frac 1 2 + \frac 1 {3!} + \dots + \frac 1 {25!}\)</span></p>
 </div>
 <div class="fragment">
-<p><span class="math inline">\(\phantom{\mathbb E[N]} = \frac{1}{0!} + \frac{1}{1!} + \frac 1 2 + \frac 1 {3!} + \dots + \frac 1 {25!} = \sum_{k=0}^{25} \frac{1}{k!}\)</span></p>
+<p><span class="math inline">\(\phantom{\mathbb E[N]} = \frac{1}{0!} + \frac{1}{1!} + \frac 1 {2!} + \frac 1 {3!} + \dots + \frac 1 {25!} = \sum_{k=0}^{25} \frac{1}{k!}\)</span></p>
 </div>
 </section>
 <section id="the-theoretical-answer-1" class="slide level2">
@@ -784,7 +782,7 @@ HTTHTTT<font color="yellow">HTH</font>
 </section>
 <section id="thank-you" class="slide level2">
 <h2>Thank you!</h2>
-<p>Slides, GitHub link, and solutions to puzzles:</p>
+<p>Problem statements / solutions, slides, GitHub link:</p>
 
 <img data-src="qr-code-clebigdata.png" class="r-stretch quarto-figure-center"><p><a href="https://aaron-montgomery.github.io/clebigdata-mar23/">aaron-montgomery.github.io/clebigdata-mar23/</a></p>
 <div class="footer footer-default">
